@@ -1,0 +1,275 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "recipe.schema.json",
+  "title": "Recipe",
+  "description": "A structured Greek cooking recipe with precise temperatures, timings, and heat settings",
+  "type": "object",
+  "required": ["id", "name", "category", "servings", "ingredients", "steps", "created_at", "updated_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "URL-safe slug identifier, e.g. 'giouvetsi-laxanikon', 'spanakoryzo'",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Recipe name in Greek, e.g. 'Γιουβέτσι Λαχανικών'"
+    },
+    "name_en": {
+      "type": "string",
+      "description": "Recipe name in English for search/reference, e.g. 'Vegetable Giouvetsi'"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description in Greek, 1-2 sentences"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ζυμαρικά",
+        "λαδερά",
+        "κρέατα",
+        "θαλασσινά",
+        "αυγά",
+        "σαλάτες",
+        "σούπες",
+        "όσπρια",
+        "ρύζι",
+        "τεχνικές",
+        "άλλο"
+      ],
+      "description": "Primary recipe category"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Searchable tags, e.g. ['χορτοφαγικό', 'γρήγορο', 'μαμά', 'Πετρετζίκης']"
+    },
+    "source": {
+      "type": "object",
+      "description": "Where this recipe originated",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "e.g. 'Akis Petretzikis', 'Μαμά', 'Claude adaptation', 'original'"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Original recipe URL if applicable"
+        }
+      }
+    },
+    "servings": {
+      "type": "object",
+      "required": ["amount"],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "description": "Number of servings this recipe produces"
+        },
+        "label": {
+          "type": "string",
+          "description": "e.g. 'άτομα', 'μερίδες'"
+        }
+      }
+    },
+    "time": {
+      "type": "object",
+      "properties": {
+        "prep_minutes": {
+          "type": "integer",
+          "description": "Preparation time in minutes"
+        },
+        "cook_minutes": {
+          "type": "integer",
+          "description": "Active cooking time in minutes"
+        },
+        "rest_minutes": {
+          "type": "integer",
+          "description": "Resting time (e.g. dough resting, meat resting)"
+        },
+        "total_minutes": {
+          "type": "integer",
+          "description": "Total time from start to plate"
+        }
+      }
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["εύκολο", "μέτριο", "δύσκολο"],
+      "description": "Difficulty level"
+    },
+    "equipment": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Required equipment, e.g. ['πλατιά κατσαρόλα', 'μικρό τηγάνι αντικολλητικό']"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "group": {
+            "type": "string",
+            "description": "Ingredient group heading, e.g. 'Βάση', 'Λαχανικά', 'Φινίρισμα'"
+          },
+          "name": {
+            "type": "string",
+            "description": "Ingredient name in Greek, e.g. 'κριθαράκι (μέτριο)'"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Quantity for the base servings"
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit of measure, e.g. 'γρ', 'κ.σ.', 'κ.γ.', 'φλιτζάνι', 'τεμ'"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Preparation note, e.g. 'ψιλοκομμένο', 'λεπτές φέτες', 'ζεστό'"
+          },
+          "optional": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether this ingredient is optional"
+          },
+          "substitutions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Known good substitutions, e.g. ['βούτυρο → ελαιόλαδο']"
+          }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["order", "title", "instruction"],
+        "properties": {
+          "order": {
+            "type": "integer",
+            "description": "Step number"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short step title, e.g. 'Σοτάρεις τα λαχανικά'"
+          },
+          "instruction": {
+            "type": "string",
+            "description": "Detailed instruction in Greek with specifics"
+          },
+          "heat_setting": {
+            "type": "object",
+            "description": "Stove heat setting for this step",
+            "properties": {
+              "level": {
+                "type": "string",
+                "description": "Heat level on 1-9 electric scale, e.g. '7-8', '4-5', 'MAX'"
+              },
+              "label": {
+                "type": "string",
+                "enum": ["πολύ χαμηλή", "χαμηλή", "μέτρια-χαμηλή", "μέτρια", "μέτρια-δυνατή", "δυνατή", "MAX", "κλειστή"],
+                "description": "Human-readable heat description"
+              }
+            }
+          },
+          "duration": {
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number",
+                "description": "Duration in minutes"
+              },
+              "until": {
+                "type": "string",
+                "description": "Visual/sensory cue, e.g. 'να μαλακώσει και να γίνει διάφανο'"
+              }
+            }
+          },
+          "tips": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Step-specific tips, e.g. ['Ανακατεύεις κάθε 1-2 λεπτά']"
+          },
+          "ingredients_used": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Which ingredients are introduced in this step (by name)"
+          }
+        }
+      }
+    },
+    "serving_suggestion": {
+      "type": "string",
+      "description": "How to serve, e.g. 'Με φέτα θρυμματισμένη και φρέσκο πιπέρι'"
+    },
+    "general_tips": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Overall recipe tips not tied to a specific step"
+    },
+    "modifications_log": {
+      "type": "array",
+      "description": "History of modifications — critical for taste learning",
+      "items": {
+        "type": "object",
+        "required": ["date", "description"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "When the modification was made"
+          },
+          "description": {
+            "type": "string",
+            "description": "What was changed, e.g. 'Αντικατάσταση κολοκυθιού με μελιτζάνα'"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why, e.g. 'Δεν υπήρχε κολοκύθι, preference for μελιτζάνα'"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": ["keeper", "revert", "try-again", "undecided"],
+            "description": "Whether this modification is permanent"
+          }
+        }
+      }
+    },
+    "rating": {
+      "type": "object",
+      "description": "Personal rating after cooking",
+      "properties": {
+        "score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1-5 rating"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Free text reaction, e.g. 'Γάμησε!'"
+        },
+        "would_make_again": {
+          "type": "boolean"
+        },
+        "last_cooked": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

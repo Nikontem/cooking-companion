@@ -1,0 +1,93 @@
+[
+  {
+    "id": "fakes",
+    "name": "Φακές",
+    "name_en": "Lentil Soup",
+    "category": "όσπρια",
+    "tags": [
+      "φακές",
+      "όσπρια",
+      "λαδερό",
+      "μαμά",
+      "νηστίσιμο",
+      "χορτοφαγικό"
+    ]
+  },
+  {
+    "id": "fasolakia-ladera",
+    "name": "Φασολάκια Λαδερά",
+    "name_en": "Green Beans in Olive Oil",
+    "category": "λαδερά",
+    "tags": [
+      "φασολάκια",
+      "λαδερό",
+      "χορτοφαγικό",
+      "κλασικό",
+      "νηστίσιμο"
+    ]
+  },
+  {
+    "id": "makaronia-me-kima",
+    "name": "Μακαρόνια με Κιμά",
+    "name_en": "Spaghetti with Meat Sauce",
+    "category": "ζυμαρικά",
+    "tags": [
+      "κιμάς",
+      "μακαρόνια",
+      "σάλτσα",
+      "κλασικό"
+    ]
+  },
+  {
+    "id": "omeleta-me-laxanika",
+    "name": "Ομελέτα με Λαχανικά",
+    "name_en": "Vegetable Omelette",
+    "category": "αυγά",
+    "tags": [
+      "αυγά",
+      "ομελέτα",
+      "λαχανικά",
+      "γρήγορο",
+      "ελαφρύ"
+    ]
+  },
+  {
+    "id": "spanakoryzo-tis-mamas",
+    "name": "Σπανακόρυζο \"της Μαμάς\"",
+    "name_en": "Mom's Spinach Rice",
+    "category": "λαδερά",
+    "tags": [
+      "σπανάκι",
+      "ρύζι",
+      "λαδερό",
+      "μαμά",
+      "χορτοφαγικό"
+    ]
+  },
+  {
+    "id": "tiganito-avgo",
+    "name": "Τηγανητό Αυγό",
+    "name_en": "Fried Egg",
+    "category": "αυγά",
+    "tags": [
+      "αυγό",
+      "τηγανητό",
+      "τεχνική",
+      "βασικό",
+      "γρήγορο"
+    ]
+  },
+  {
+    "id": "turkey-burgers-me-troufa",
+    "name": "Turkey Burgers με Τρούφα",
+    "name_en": "Turkey Burgers with Truffle",
+    "category": "κρέατα",
+    "tags": [
+      "γαλοπούλα",
+      "τρούφα",
+      "air fryer",
+      "burger",
+      "γρήγορο"
+    ]
+  }
+]

@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "taste-profile.schema.json",
+  "title": "TasteProfile",
+  "description": "Personal cooking profile — equipment, preferences, and taste patterns. This is what makes suggestions personalized.",
+  "type": "object",
+  "required": ["preferences", "updated_at"],
+  "properties": {
+    "equipment": {
+      "type": "object",
+      "description": "Kitchen equipment and their specifics",
+      "properties": {
+        "stove": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["electric", "gas", "induction"],
+              "description": "Stove type"
+            },
+            "heat_scale": {
+              "type": "object",
+              "description": "Mapping of heat descriptions to numeric settings",
+              "properties": {
+                "min": { "type": "integer" },
+                "max": { "type": "integer" },
+                "low": { "type": "string", "description": "e.g. '3-4'" },
+                "medium_low": { "type": "string", "description": "e.g. '4-5'" },
+                "medium": { "type": "string", "description": "e.g. '5-6'" },
+                "high": { "type": "string", "description": "e.g. '7-8'" },
+                "max_setting": { "type": "string", "description": "e.g. '9'" }
+              }
+            },
+            "notes": {
+              "type": "string",
+              "description": "e.g. 'Runs one setting higher than standard'"
+            }
+          }
+        },
+        "available": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Available equipment, e.g. ['Xiaomi air fryer (μικρό)', 'wok', 'βραστήρας αυγών', 'αντικολλητικό τηγάνι']"
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "description": "Taste preferences and cooking principles",
+      "properties": {
+        "flavor_principles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Hard rules about flavor, e.g. ['Ποτέ κανέλα/ζάχαρη σε αλμυρά', 'Παραδοσιακό ελληνικό λαδερό στυλ']"
+        },
+        "favorite_ingredients": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ingredients that appear often and are enjoyed, e.g. ['μελιτζάνα', 'γλυκοπατάτα', 'φέτα', 'σκόρδο']"
+        },
+        "disliked_ingredients": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ingredients to avoid"
+        },
+        "flavor_affinities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "combination": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "e.g. ['σπανακόρυζο', 'τηγανητό αυγό', 'φέτα']"
+              },
+              "notes": {
+                "type": "string",
+                "description": "e.g. 'Σπας τον κρόκο πάνω στο ρύζι = θεϊκό'"
+              }
+            }
+          },
+          "description": "Flavor combinations that work well for this person"
+        },
+        "cooking_style": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "How they like to cook, e.g. ['Μεθοδικός', 'Θέλει ακριβείς χρόνους/θερμοκρασίες', 'Δεν ακολουθεί τυφλά — ρωτάει γιατί']"
+        },
+        "spice_tolerance": {
+          "type": "string",
+          "enum": ["mild", "medium", "spicy", "very-spicy"],
+          "description": "How much heat they enjoy"
+        }
+      }
+    },
+    "dietary": {
+      "type": "object",
+      "description": "Dietary context that affects recipe suggestions",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "e.g. 'Intermittent fasting'"
+        },
+        "goals": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "e.g. ['Calorie-conscious', 'High protein', 'Active lifestyle — calisthenics']"
+        },
+        "restrictions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Allergies or hard restrictions"
+        }
+      }
+    },
+    "cooking_log": {
+      "type": "array",
+      "description": "Recent cooking history — prevents repetitive suggestions, tracks what works",
+      "items": {
+        "type": "object",
+        "required": ["recipe_id", "date"],
+        "properties": {
+          "recipe_id": {
+            "type": "string",
+            "description": "References a recipe by id"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "result": {
+            "type": "string",
+            "enum": ["great", "good", "ok", "meh", "bad"],
+            "description": "How it turned out"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Any observations, e.g. 'Χρειαζόταν 2 λεπτά παραπάνω'"
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

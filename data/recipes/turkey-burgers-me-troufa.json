@@ -1,0 +1,176 @@
+{
+  "id": "turkey-burgers-me-troufa",
+  "name": "Turkey Burgers με Τρούφα",
+  "name_en": "Turkey Burgers with Truffle",
+  "description": "Μπιφτέκια γαλοπούλας με σάλτσα κατσικίσιου γιαουρτιού και μαύρης τρούφας. Λιγότερα = καλύτερα.",
+  "category": "κρέατα",
+  "tags": ["γαλοπούλα", "τρούφα", "air fryer", "burger", "γρήγορο"],
+  "source": {
+    "origin": "original"
+  },
+  "servings": {
+    "amount": 2,
+    "label": "μπιφτέκια"
+  },
+  "time": {
+    "prep_minutes": 10,
+    "cook_minutes": 15,
+    "total_minutes": 25
+  },
+  "difficulty": "εύκολο",
+  "equipment": ["air fryer"],
+  "ingredients": [
+    {
+      "group": "Βάση",
+      "name": "κιμάς γαλοπούλα",
+      "amount": 460,
+      "unit": "γρ",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Βάση",
+      "name": "ψωμάκι burger",
+      "amount": 2,
+      "unit": "τεμ",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Λαχανικά",
+      "name": "μαρούλι",
+      "amount": 2,
+      "unit": "φύλλα",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Λαχανικά",
+      "name": "ντομάτα",
+      "amount": 2,
+      "unit": "φέτες",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Σάλτσα",
+      "name": "κατσικίσιο γιαούρτι",
+      "amount": 80,
+      "unit": "γρ",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Σάλτσα",
+      "name": "μαύρη τρούφα",
+      "amount": 3,
+      "unit": "φέτες",
+      "notes": "ψιλοκομμένες",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Σάλτσα",
+      "name": "χυμός lime",
+      "amount": 0.5,
+      "unit": "τεμ",
+      "notes": "χυμός από μισό lime",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Λάδι/Λίπος",
+      "name": "ελαιόλαδο",
+      "amount": 1,
+      "unit": "κ.σ.",
+      "notes": "για τη σάλτσα",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Λάδι/Λίπος",
+      "name": "ελαιόλαδο σε spray",
+      "amount": 1,
+      "unit": "τεμ",
+      "notes": "ψεκασμός για τα μπιφτέκια",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Καρυκεύματα",
+      "name": "αλάτι",
+      "amount": 1,
+      "unit": "πρέζα",
+      "optional": false,
+      "substitutions": []
+    },
+    {
+      "group": "Καρυκεύματα",
+      "name": "πιπέρι",
+      "amount": 1,
+      "unit": "πρέζα",
+      "optional": false,
+      "substitutions": []
+    }
+  ],
+  "steps": [
+    {
+      "order": 1,
+      "title": "Σάλτσα τρούφας",
+      "instruction": "Σε μπολ ανακατεύεις 80γρ κατσικίσιο γιαούρτι, 2-3 φέτες μαύρη τρούφα ψιλοκομμένες, χυμό από μισό lime, 1 κ.σ. ελαιόλαδο, αλάτι και πιπέρι. Αφήνεις στο ψυγείο μέχρι να χρειαστεί.",
+      "duration": {
+        "minutes": 5
+      },
+      "tips": [
+        "Η τρούφα δεν χρειάζεται υποστήριξη — λιγότερα = καλύτερα. ΟΧΙ σκόρδο, ΟΧΙ άνηθο, αφήνεις την τρούφα να λάμψει μόνη της.",
+        "Lime αντί λεμόνι για πιο subtle οξύτητα."
+      ],
+      "ingredients_used": ["κατσικίσιο γιαούρτι", "μαύρη τρούφα", "χυμός lime", "ελαιόλαδο", "αλάτι", "πιπέρι"]
+    },
+    {
+      "order": 2,
+      "title": "Διαμόρφωση μπιφτεκιών",
+      "instruction": "Χωρίζεις τον κιμά γαλοπούλας σε 2 μπάλες (~230γρ η κάθε μία). Πλάθεις μπιφτέκια και ψεκάζεις και τις δύο πλευρές με ελαιόλαδο. Αλατοπιπερώνεις και τις δύο πλευρές.",
+      "duration": {
+        "minutes": 3
+      },
+      "tips": [],
+      "ingredients_used": ["κιμάς γαλοπούλα", "ελαιόλαδο σε spray", "αλάτι", "πιπέρι"]
+    },
+    {
+      "order": 3,
+      "title": "Ψήσιμο στο Air Fryer",
+      "instruction": "Προθερμαίνεις το air fryer στους 180°C. Ψήνεις τα μπιφτέκια 12-15 λεπτά, γυρίζοντάς τα στα 7 λεπτά.",
+      "heat_setting": {
+        "level": "180°C",
+        "label": "μέτρια"
+      },
+      "duration": {
+        "minutes": 15,
+        "until": "να ψηθούν πλήρως"
+      },
+      "tips": [
+        "Γύρισμα στα 7 λεπτά."
+      ],
+      "ingredients_used": []
+    },
+    {
+      "order": 4,
+      "title": "Assembly",
+      "instruction": "Στρώνεις: ψωμάκι (βάση) → σάλτσα τρούφας → μαρούλι → μπιφτέκι → ντομάτα → extra σάλτσα τρούφας → ψωμάκι (καπάκι).",
+      "duration": {},
+      "tips": [],
+      "ingredients_used": ["ψωμάκι burger", "μαρούλι", "ντομάτα"]
+    }
+  ],
+  "serving_suggestion": "Σερβίρεις αμέσως μετά το assembly. Η σάλτσα τρούφας πάει και πάνω και κάτω από το μπιφτέκι.",
+  "general_tips": [
+    "🚫 ΟΧΙ σκόρδο, ΟΧΙ άνηθο — η τρούφα λάμπει μόνη της, μην τη πνίξεις.",
+    "Εξέλιξη σάλτσας: Ξεκίνησε ως κατσικίσιο γιαούρτι + σκορδόσκονη + λεμόνι + άνηθο. Σταδιακά αφαιρέθηκαν τα πάντα εκτός από τα βασικά.",
+    "Lime αντί λεμόνι για πιο subtle οξύτητα."
+  ],
+  "modifications_log": [],
+  "rating": {},
+  "created_at": "2026-02-11T00:00:00.000Z",
+  "updated_at": "2026-02-11T00:00:00.000Z"
+}

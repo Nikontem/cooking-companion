@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "shelf.schema.json",
+  "title": "Shelf",
+  "description": "Kitchen shelf — spices (names only) and categorized ingredients with quantities",
+  "type": "object",
+  "required": ["spices", "categories", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "spices": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Available spices and herbs (names only, no quantities)"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "ingredients"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Category name, e.g. 'Κρέατα', 'Λάδια & Λίπη'"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "quantity": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "type": "string",
+                  "description": "e.g. 'g', 'kg', 'lt', 'ml', 'τεμ'"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
