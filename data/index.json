@@ -1,5 +1,17 @@
 [
   {
+    "id": "choirini-brizola-tigani",
+    "name": "Χοιρινή Μπριζόλα στο Τηγάνι",
+    "name_en": "Pan-Seared Pork Chop",
+    "category": "κρέατα",
+    "tags": [
+      "γρήγορο",
+      "high-protein",
+      "απλό",
+      "χοιρινό"
+    ]
+  },
+  {
     "id": "fakes",
     "name": "Φακές",
     "name_en": "Lentil Soup",
@@ -52,6 +64,20 @@
     ]
   },
   {
+    "id": "revythia-ladera",
+    "name": "Ρεβύθια Λαδερά",
+    "name_en": "Chickpeas in Tomato Sauce",
+    "category": "όσπρια",
+    "tags": [
+      "λαδερό",
+      "όσπρια",
+      "high protein",
+      "meal prep",
+      "παραδοσιακό",
+      "απλό"
+    ]
+  },
+  {
     "id": "spanakoryzo-tis-mamas",
     "name": "Σπανακόρυζο \"της Μαμάς\"",
     "name_en": "Mom's Spinach Rice",
@@ -88,6 +114,19 @@
       "air fryer",
       "burger",
       "γρήγορο"
+    ]
+  },
+  {
+    "id": "xoirines-brizoles-reverse-sear",
+    "name": "Χοιρινές Μπριζόλες Reverse Sear",
+    "name_en": "Pork Chops Reverse Sear",
+    "category": "κρέατα",
+    "tags": [
+      "χοιρινό",
+      "γρήγορο",
+      "απλό",
+      "high-protein",
+      "reverse sear"
     ]
   }
 ]

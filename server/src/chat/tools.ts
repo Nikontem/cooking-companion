@@ -1,5 +1,5 @@
-import {tool} from 'ai';
-import {z} from 'zod/v4';
+import { tool } from 'ai';
+import { z } from 'zod/v4';
 import {
   deleteRecipe,
   getAppliances,
@@ -14,6 +14,18 @@ import {
   updateShelf,
   updateTasteProfile,
 } from '../data/index.js';
+
+/**
+ * Safely parse a JSON string, returning a structured error on failure
+ * so the model gets actionable feedback instead of a silent crash.
+ */
+function safeParse(jsonString: string): { data?: unknown; error?: string } {
+  try {
+    return { data: JSON.parse(jsonString) };
+  } catch (err) {
+    return { error: `Invalid JSON: ${(err as Error).message}. Fix the JSON and try again.` };
+  }
+}
 
 export const chatTools = {
   list_recipes: tool({
@@ -30,7 +42,11 @@ export const chatTools = {
       id: z.string().describe('Recipe slug id, e.g. "spanakoryzo-tis-mamas", "fakes"'),
     }),
     execute: async ({ id }) => {
-      return await getRecipe(id);
+      try {
+        return await getRecipe(id);
+      } catch (err) {
+        return { error: `Recipe "${id}" not found: ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -45,14 +61,69 @@ export const chatTools = {
   }),
 
   save_recipe: tool({
-    description: 'Creates or updates a recipe. Input is a JSON string of the full recipe object. Validates against the recipe schema. Always confirm with the user before saving.',
+    description: 'Creates or updates a recipe with structured fields. Always confirm with the user before saving. Timestamps, modifications_log, and rating are auto-managed.',
     inputSchema: z.object({
-      recipe: z.string().describe('Full recipe as a JSON string'),
+      id: z.string().describe('URL-safe slug, e.g. "xoirines-brizoles-tiganiou", "fakes"'),
+      name: z.string().describe('Recipe name in Greek'),
+      name_en: z.string().optional().describe('English translation of the recipe name'),
+      description: z.string().optional().describe('Short description in Greek, 1-2 sentences'),
+      category: z.enum(['ζυμαρικά', 'λαδερά', 'κρέατα', 'θαλασσινά', 'αυγά', 'σαλάτες', 'σούπες', 'όσπρια', 'ρύζι', 'τεχνικές', 'άλλο']),
+      tags: z.array(z.string()).optional().describe('Searchable tags, e.g. ["γρήγορο", "εύκολο"]'),
+      difficulty: z.enum(['εύκολο', 'μέτριο', 'δύσκολο']).optional(),
+      servings: z.object({
+        amount: z.number().int().describe('Number of servings'),
+        label: z.string().optional().describe('e.g. "μερίδες", "άτομα"'),
+      }),
+      time: z.object({
+        prep_minutes: z.number().int().optional(),
+        cook_minutes: z.number().int().optional(),
+        rest_minutes: z.number().int().optional(),
+        total_minutes: z.number().int().optional(),
+      }).optional(),
+      equipment: z.array(z.string()).optional().describe('Required equipment, e.g. ["αντικολλητικό τηγάνι"]'),
+      ingredients: z.array(z.object({
+        group: z.enum(['Βάση', 'Λαχανικά', 'Αρωματικά', 'Σάλτσα', 'Καρυκεύματα', 'Λάδι/Λίπος', 'Προαιρετικά']).optional()
+          .describe('Fixed groups: αλάτι/πιπέρι→Καρυκεύματα, ελαιόλαδο→Λάδι/Λίπος, κρεμμύδι/σκόρδο→Αρωματικά'),
+        name: z.string().describe('Ingredient name in Greek'),
+        amount: z.number().optional(),
+        unit: z.string().optional().describe('e.g. "γρ", "κ.σ.", "κ.γ.", "ml", "τεμ"'),
+        notes: z.string().optional().describe('e.g. "ψιλοκομμένο", "σε θερμοκρασία δωματίου"'),
+        optional: z.boolean().optional(),
+        substitutions: z.array(z.string()).optional(),
+      })),
+      steps: z.array(z.object({
+        order: z.number().int(),
+        title: z.string().describe('Short step title in Greek'),
+        instruction: z.string().describe('Detailed instruction in Greek'),
+        heat_setting: z.object({
+          level: z.string().describe('Heat level, e.g. "5-6", "7-8", "MAX"'),
+          label: z.enum(['πολύ χαμηλή', 'χαμηλή', 'μέτρια-χαμηλή', 'μέτρια', 'μέτρια-δυνατή', 'δυνατή', 'MAX', 'κλειστή']),
+        }).optional(),
+        duration: z.object({
+          minutes: z.number().optional(),
+          until: z.string().optional().describe('Sensory cue, e.g. "να ροδίσει και να γίνει κρούστα"'),
+        }).optional(),
+        tips: z.array(z.string()).optional(),
+        ingredients_used: z.array(z.string()).optional().describe('Ingredient names introduced in this step'),
+      })),
+      serving_suggestion: z.string().optional(),
+      general_tips: z.array(z.string()).optional(),
     }),
-    execute: async ({ recipe }) => {
-      const parsed = JSON.parse(recipe);
-      await saveRecipe(parsed);
-      return { success: true, message: `Recipe "${parsed.id}" saved successfully.` };
+    execute: async (input) => {
+      const now = new Date().toISOString();
+      const recipe = {
+        ...input,
+        modifications_log: [],
+        rating: {},
+        created_at: now,
+        updated_at: now,
+      };
+      try {
+        await saveRecipe(recipe as Record<string, unknown>);
+        return { success: true, message: `Recipe "${input.id}" saved successfully.` };
+      } catch (err) {
+        return { success: false, error: `Failed to save recipe: ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -62,8 +133,12 @@ export const chatTools = {
       id: z.string().describe('Recipe slug id to delete'),
     }),
     execute: async ({ id }) => {
-      await deleteRecipe(id);
-      return { success: true, message: `Recipe "${id}" deleted.` };
+      try {
+        await deleteRecipe(id);
+        return { success: true, message: `Recipe "${id}" deleted.` };
+      } catch (err) {
+        return { success: false, error: `Failed to delete recipe "${id}": ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -81,8 +156,13 @@ export const chatTools = {
       updates: z.string().describe('Partial taste profile as a JSON string'),
     }),
     execute: async ({ updates }) => {
-      const parsed = JSON.parse(updates);
-      return await updateTasteProfile(parsed);
+      const { data: parsed, error } = safeParse(updates);
+      if (error) return { success: false, error };
+      try {
+        return await updateTasteProfile(parsed as Record<string, unknown>);
+      } catch (err) {
+        return { success: false, error: `Failed to update taste profile: ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -95,8 +175,12 @@ export const chatTools = {
       notes: z.string().optional().describe('Any observations'),
     }),
     execute: async (args) => {
-      await logCook(args);
-      return { success: true, message: `Cook logged for "${args.recipe_id}" on ${args.date}.` };
+      try {
+        await logCook(args);
+        return { success: true, message: `Cook logged for "${args.recipe_id}" on ${args.date}.` };
+      } catch (err) {
+        return { success: false, error: `Failed to log cook: ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -114,8 +198,13 @@ export const chatTools = {
       updates: z.string().describe('Partial shelf data as a JSON string'),
     }),
     execute: async ({ updates }) => {
-      const parsed = JSON.parse(updates);
-      return await updateShelf(parsed);
+      const { data: parsed, error } = safeParse(updates);
+      if (error) return { success: false, error };
+      try {
+        return await updateShelf(parsed as Record<string, unknown>);
+      } catch (err) {
+        return { success: false, error: `Failed to update shelf: ${(err as Error).message}` };
+      }
     },
   }),
 
@@ -133,8 +222,13 @@ export const chatTools = {
       updates: z.string().describe('Partial appliances data as a JSON string'),
     }),
     execute: async ({ updates }) => {
-      const parsed = JSON.parse(updates);
-      return await updateAppliances(parsed);
+      const { data: parsed, error } = safeParse(updates);
+      if (error) return { success: false, error };
+      try {
+        return await updateAppliances(parsed as Record<string, unknown>);
+      } catch (err) {
+        return { success: false, error: `Failed to update appliances: ${(err as Error).message}` };
+      }
     },
   }),
 };

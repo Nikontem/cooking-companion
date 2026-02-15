@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { streamText, stepCountIs } from 'ai';
+import { streamText, wrapLanguageModel, stepCountIs } from 'ai';
 import { getModel, SUPPORTED_PROVIDERS, DEFAULT_PROVIDER } from './models.js';
 import { chatTools } from './tools.js';
 import { buildSystemPrompt } from './system-prompt.js';
-import { checkOnTopic, REFUSAL } from './guardrail.js';
+import { loggingMiddleware } from './logging.js';
 
 export const chatRouter = Router();
 
@@ -23,29 +23,9 @@ chatRouter.post('/', async (req, res) => {
   try {
     const { messages, provider, model: modelId, recipe_id } = req.body as ChatRequest;
 
-    console.log('[chat] Incoming request:', {
-      messageCount: messages?.length,
-      provider: provider || DEFAULT_PROVIDER,
-      model: modelId || 'default',
-      recipe_id: recipe_id || 'none',
-    });
-
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       res.status(400).json({ error: 'messages array is required and must not be empty' });
       return;
-    }
-
-    // Server-side guardrail: classify the latest user message before calling the main model
-    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
-    if (lastUserMsg) {
-      console.log('[chat] Last user message (first 200 chars):', lastUserMsg.content.slice(0, 200));
-      const onTopic = await checkOnTopic(lastUserMsg.content);
-      console.log('[chat] Guardrail result:', onTopic ? 'ON-TOPIC ✅' : 'OFF-TOPIC ❌');
-      if (!onTopic) {
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-        res.end(REFUSAL);
-        return;
-      }
     }
 
     const resolvedProvider = provider || DEFAULT_PROVIDER;
@@ -74,21 +54,45 @@ chatRouter.post('/', async (req, res) => {
       return;
     }
 
+    // Wrap model with logging middleware
+    const wrappedModel = wrapLanguageModel({
+      model: llmModel,
+      middleware: loggingMiddleware,
+    });
+
     const systemPrompt = await buildSystemPrompt(recipe_id);
-    console.log('[chat] System prompt length:', systemPrompt.length, 'chars');
-    console.log('[chat] System prompt starts with:', systemPrompt.slice(0, 100));
 
     const result = streamText({
-      model: llmModel,
+      model: wrappedModel,
       system: systemPrompt,
       messages,
       tools: chatTools,
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(10),
+      onStepFinish: ({ text, toolCalls, toolResults, finishReason, usage }) => {
+        console.log('[chat:step]', JSON.stringify({
+          finishReason,
+          textLength: text?.length ?? 0,
+          toolCalls: toolCalls?.map((tc) => tc.toolName),
+          toolResults: toolResults?.map((tr) => ({
+            toolName: tr.toolName,
+            resultPreview: 'result' in tr ? JSON.stringify(tr.result).slice(0, 150) : '(no result)',
+          })),
+          usage: { input: usage.inputTokens, output: usage.outputTokens },
+        }));
+      },
+      onFinish: ({ text, steps, usage, finishReason }) => {
+        console.log('[chat:finish]', JSON.stringify({
+          finishReason,
+          totalSteps: steps.length,
+          totalTextLength: text?.length ?? 0,
+          usage: { input: usage.inputTokens, output: usage.outputTokens },
+        }));
+      },
     });
 
     result.pipeTextStreamToResponse(res);
   } catch (err) {
-    console.error('Chat error:', err);
+    console.error('[chat:error]', err);
     if (!res.headersSent) {
       res.status(500).json({ error: 'Internal server error' });
     }
